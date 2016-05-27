@@ -1,5 +1,9 @@
 package com.xunwen.tree.binary;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
 /**
  * The operation for binary tree, include build binary tree 
  * by pre-order array and in-order array {@code }}
@@ -7,6 +11,69 @@ package com.xunwen.tree.binary;
  *
  */
 public class BinaryTreeUtil {
+	
+	public static void traverseTreePreOrder(BinaryTreeNode rootNode, List<Integer> list) {
+		// the condition to exit recursion
+		if (rootNode == null || list == null) {
+			return;
+		}
+		list.add(rootNode.getValue());
+		if (rootNode.getLeft() != null) {
+			traverseTreePreOrder(rootNode.getLeft(), list);
+		}
+		if (rootNode.getRight() != null) {
+			traverseTreePreOrder(rootNode.getRight(), list);
+		}
+	}
+	
+	public static List<Integer> traverseTreePreOrder(BinaryTreeNode rootNode) {
+		if (null == rootNode) {
+			return null;
+		}
+		List<Integer> list = new ArrayList<Integer>();
+		Stack<BinaryTreeNode> stack = new Stack<BinaryTreeNode>();
+		BinaryTreeNode node = rootNode;
+		while (node != null || !stack.isEmpty()) {
+			while (node != null) {
+				list.add(node.getValue());
+				stack.push(node);
+				node = node.getLeft();
+			}
+			if (!stack.isEmpty()) {
+				BinaryTreeNode top = stack.pop();
+				node = top.getRight();
+			}
+		}
+		return list;
+	}
+	
+	public static void traverseTreeInOrder(BinaryTreeNode rootNode, List<Integer> list) {
+		// the condition to exit recursion
+		if (null == rootNode || null == list) {
+			return;
+		}
+		if (null != rootNode.getLeft()) {
+			traverseTreeInOrder(rootNode.getLeft(), list);
+		}
+		list.add(rootNode.getValue());
+		if (null != rootNode.getRight()) {
+			traverseTreeInOrder(rootNode.getRight(), list);
+		}
+	}
+	
+	public static void traverseTreePostOrder(BinaryTreeNode rootNode, List<Integer> list) {
+		// the condition to exit recursion
+		if (rootNode == null || list == null) {
+			return;
+		}
+		if (rootNode.getLeft() != null) {
+			traverseTreePostOrder(rootNode.getLeft(), list);
+		}
+		if (rootNode.getRight() != null) {
+			traverseTreePostOrder(rootNode.getRight(), list);
+		}
+		list.add(rootNode.getValue());
+	}
  
 	/**
 	 * build binary tree 
@@ -54,8 +121,9 @@ public class BinaryTreeUtil {
 		rootNode.setValue(rootValue);
 		
 		// the condition to exit recurse
-		if (startInOrderIndex == endInOrderIndex) {
-			if (preOrderArray[startPreOrderIndex] == inOrderArray[startInOrderIndex]) {
+		if (startPreOrderIndex == endPreOrderIndex) {
+			if (preOrderArray[startPreOrderIndex] == inOrderArray[startInOrderIndex]
+					&& startInOrderIndex == endInOrderIndex) {
 				return rootNode;
 			}
 			else {
@@ -64,7 +132,7 @@ public class BinaryTreeUtil {
 		}
 		
 		// find the value of root node in inOrderArray
-		int rootInOrderIndex = startPreOrderIndex;
+		int rootInOrderIndex = startInOrderIndex;
 		while (rootInOrderIndex <= endPreOrderIndex && inOrderArray[rootInOrderIndex] != rootValue) {
 			rootInOrderIndex++;
 		}
@@ -72,7 +140,6 @@ public class BinaryTreeUtil {
 		if (rootInOrderIndex == endPreOrderIndex && inOrderArray[rootInOrderIndex] != rootValue) {
 			throw new Exception("Invalid input preorderarray or inorderarray");
 		}
-		
 		int leftTreeLength = rootInOrderIndex - startInOrderIndex;
 		int leftEndPreOrderIndex = startPreOrderIndex + leftTreeLength;
 		// build the left tree node
@@ -89,7 +156,7 @@ public class BinaryTreeUtil {
 					rootInOrderIndex + 1, endInOrderIndex);
 			rootNode.setRight(rightNode);
 		}
-		return null;
+		return rootNode;
 	}
 	
 }
